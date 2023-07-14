@@ -1,0 +1,29 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxthq/ui": "^2.5.0",
+    "@types/node": "^18",
+    "autoprefixer": "^10.4.14",
+    "nuxt": "^3.6.1",
+    "nuxt-security": "^0.13.1",
+    "postcss": "^8.4.24",
+    "typescript": "5.0.4"
+  },
+  "dependencies": {
+    "@iconify-json/tabler": "^1.1.81",
+    "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
+    "@pinia/nuxt": "^0.4.11",
+    "pinia": "^2.1.4",
+    "vue-recaptcha-v3": "^2.0.1",
+    "vue3-toastify": "^0.1.11"
+  }
+}
