@@ -15,6 +15,18 @@ interface BotsState {
     createBotErrors?: ObjectData | null
     isCreatingBot?: boolean
     isFetchingBot?: boolean
+    isAwaitingResponse?: boolean
+}
+
+type SendBotMessageResponse = {
+    text: string
+    sessionId: string
+    sourceDocuments: {
+        metadata?: {
+            title?: string
+            url?: string
+        }
+    }[]
 }
 
 export const useBotsStore = defineStore('bots', {
@@ -26,6 +38,7 @@ export const useBotsStore = defineStore('bots', {
         websiteInfoErrorMessage: '',
         isCreatingBot: false,
         createBotErrors: null,
+        isAwaitingResponse: false,
     }),
     actions: {
         async getWebsiteInfo(payload: {url: string; sourceType: string}, recaptchaToken: string) {
@@ -119,6 +132,8 @@ export const useBotsStore = defineStore('bots', {
                 this.bot = data.value.data
             }
 
+            console.log('error', error.value)
+
             if (error.value) {
                 const {message} = formatError(error.value)
 
@@ -138,6 +153,54 @@ export const useBotsStore = defineStore('bots', {
 
             if (!error.value) {
                 await this.getBots()
+            }
+
+            if (error.value) {
+                const {message} = formatError(error.value)
+
+                throw new Error(message)
+            }
+        },
+
+        async botIntro(botId: string): Promise<string | undefined> {
+            this.isAwaitingResponse = true
+
+            const {error, data, pending} = await useAPIFetch<{
+                data: {
+                    text: string
+                }
+            }, { data: FormatError }>(`/bots/${botId}/intro`)
+
+            this.isAwaitingResponse = pending.value
+
+            if (!error.value) {
+                return data.value?.data.text
+            }
+
+            if (error.value) {
+                const {message} = formatError(error.value)
+
+                throw new Error(message)
+            }
+        },
+
+        async sendBotMessage(payload: {message: string; botId: string; sessionId?: string}, recaptchaToken?: string): Promise<SendBotMessageResponse | undefined> {
+            this.isAwaitingResponse = true
+
+            const {error, data, pending} = await useAPIFetch<{
+                data: SendBotMessageResponse
+            }, { data: FormatError }>(`/bots/chat`, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                headers: {
+                    'X-Recaptcha-Token': recaptchaToken,
+                }
+            })
+
+            this.isAwaitingResponse = pending.value
+
+            if (!error.value) {
+                return data.value?.data
             }
 
             if (error.value) {

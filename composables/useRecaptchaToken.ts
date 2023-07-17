@@ -1,10 +1,9 @@
-import {IReCaptchaComposition, useReCaptcha} from 'vue-recaptcha-v3';
+import {IReCaptchaComposition} from 'vue-recaptcha-v3';
 
-export const useRecaptchaToken = async (action: string) => {
-    const recaptchaInstance = useReCaptcha();
+export const useRecaptchaToken = async (action: string, captchaInstance?: IReCaptchaComposition) => {
 
-    await recaptchaInstance?.recaptchaLoaded()
+    await captchaInstance?.recaptchaLoaded()
 
     // Execute reCAPTCHA with action "login".
-    return recaptchaInstance?.executeRecaptcha(action)
+    return captchaInstance?.executeRecaptcha(action)
 }

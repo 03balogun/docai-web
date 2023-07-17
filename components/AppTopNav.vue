@@ -2,7 +2,9 @@
 import {storeToRefs} from "pinia";
 import {useAuthStore} from "~/store/auth";
 import {useRecaptchaToken} from "~/composables/useRecaptchaToken";
+import {useReCaptcha} from "vue-recaptcha-v3";
 const { user } = storeToRefs(useAuthStore());
+const recaptchaInstance = useReCaptcha();
 
 
 const avatar = `https://api.dicebear.com/6.x/personas/svg?seed=${user.value?.name}`
@@ -11,7 +13,7 @@ const signOut = async () => {
   const confirmed = confirm('Are you sure you want to sign out?')
 
   if(confirmed) {
-    const token = await useRecaptchaToken('sign-out')
+    const token = await useRecaptchaToken('sign-out', recaptchaInstance)
 
     await useAuthStore().signOut(token);
   }

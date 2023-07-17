@@ -3,9 +3,11 @@ import {storeToRefs} from "pinia";
 import {useAuthStore} from "~/store/auth";
 import {useRecaptchaToken} from "~/composables/useRecaptchaToken";
 import AppAlert from "~/components/AppAlert.vue";
+import {useReCaptcha} from "vue-recaptcha-v3";
 
 const {authenticateUser} = useAuthStore();
 const {isAuthenticating, loginErrorMessage} = storeToRefs(useAuthStore());
+const recaptchaInstance = useReCaptcha();
 
 
 
@@ -18,7 +20,7 @@ const showPassword = ref(false)
 
 const login = async () => {
 
-  const token = await useRecaptchaToken('login')
+  const token = await useRecaptchaToken('login', recaptchaInstance)
 
   if (!token) {
     useNuxtApp().$toast.error('Please verify that you are not a robot.')

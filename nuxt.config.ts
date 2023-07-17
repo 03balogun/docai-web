@@ -17,7 +17,8 @@ export default defineNuxtConfig({
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
         '@nuxthq/ui',
-        'nuxt-security'
+        'nuxt-security',
+        '@nuxt/content'
     ],
     security: {
         headers: {

@@ -2,6 +2,8 @@
 import {storeToRefs} from "pinia";
 import {useBotsStore} from "~/store/bots";
 import {useRecaptchaToken} from "~/composables/useRecaptchaToken";
+import {useReCaptcha} from "vue-recaptcha-v3";
+const recaptchaInstance = useReCaptcha();
 
 const { getWebsiteInfo, createBot } = useBotsStore();
 
@@ -81,7 +83,7 @@ const websiteInfoTableData = computed(() => {
 })
 
 const fetchWebsiteInfo = async () => {
-  const token = await useRecaptchaToken('fetchWebsiteInfo')
+  const token = await useRecaptchaToken('fetchWebsiteInfo', recaptchaInstance)
 
   if (!token) {
     useNuxtApp().$toast.error('Please verify that you are not a robot.')
@@ -130,7 +132,7 @@ const onBotSubmitted = async () => {
     }
   }
 
-  const token = await useRecaptchaToken('onBotSubmitted')
+  const token = await useRecaptchaToken('onBotSubmitted', recaptchaInstance)
 
   if (!token) {
     useNuxtApp().$toast.error('Please verify that you are not a robot.')

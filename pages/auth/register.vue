@@ -2,8 +2,10 @@
 import {useAuthStore} from "~/store/auth";
 import {storeToRefs} from "pinia";
 import {useRecaptchaToken} from "~/composables/useRecaptchaToken";
+import {useReCaptcha} from "vue-recaptcha-v3";
 const {signUpUser} = useAuthStore();
 const {isSigningUp, registrationFieldErrors, registrationErrorMessage} = storeToRefs(useAuthStore());
+const recaptchaInstance = useReCaptcha();
 
 const formData = ref({
   name: '',
@@ -15,7 +17,7 @@ const formData = ref({
 const showPassword = ref(false)
 
 const register = async () => {
-  const token = await useRecaptchaToken('login')
+  const token = await useRecaptchaToken('login', recaptchaInstance)
 
   useNuxtApp().$toast.promise(
       signUpUser(formData.value, token),

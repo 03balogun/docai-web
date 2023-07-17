@@ -16,8 +16,12 @@
   text-transform: uppercase;
 }
 
-.chat-interface {
+.bot-chat-interface {
   min-height: calc(100vh - 13rem);
+}
+
+.chat-interface {
+  min-height: calc(100vh - 8rem);
 }
 
 
