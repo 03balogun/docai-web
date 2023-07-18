@@ -13,7 +13,7 @@ const signOut = async () => {
   const confirmed = confirm('Are you sure you want to sign out?')
 
   if(confirmed) {
-    const token = await useRecaptchaToken('sign-out', recaptchaInstance)
+    const token = await useRecaptchaToken('signOut', recaptchaInstance)
 
     await useAuthStore().signOut(token);
   }

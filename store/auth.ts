@@ -88,7 +88,7 @@ export const useAuthStore = defineStore('auth', {
             this.authenticated = false
             this.user = null
             this.token = null
-            navigateTo('/')
+            navigateTo('/login')
             useAPIFetch('/auth/logout', {
                 method: 'POST',
                 headers: {
