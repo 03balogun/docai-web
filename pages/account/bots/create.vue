@@ -25,8 +25,8 @@ const currentStep = ref(1)
 const selectedLinks = ref([])
 
 const formData = ref({
-  name: 'Trackfundx',
-  description: 'Ask me anything about the Trackfundx',
+  name: '',
+  description: '',
   dataType: '',
   linkType: 'multiple',
   baseUrl: '',
