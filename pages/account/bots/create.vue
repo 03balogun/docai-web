@@ -132,6 +132,14 @@ const onBotSubmitted = async () => {
     }
   }
 
+  const fileInput = window.document.getElementById('upload-document') as HTMLInputElement
+
+  const isDocument = formData.value.dataType === 'documents'
+
+  if (isDocument && !fileInput?.files?.length) {
+    return useNuxtApp().$toast.error('Please upload at least one file.')
+  }
+
   const token = await useRecaptchaToken('onBotSubmitted', recaptchaInstance)
 
   if (!token) {
@@ -144,7 +152,8 @@ const onBotSubmitted = async () => {
             name: formData.value.name,
             description: formData.value.description,
             dataType: formData.value.dataType,
-            urls: selectedLinks.value.map(({link}) => link)
+            urls: selectedLinks.value.map(({link}) => link),
+            files: isDocument && fileInput?.files?.length ? fileInput?.files : undefined
           },
           token
       ),
@@ -291,7 +300,21 @@ const errorMessage = computed(() => {
 
           </template>
           <template v-if="selectedDataType.id === 'documents'">
-            <h4>Upload documents</h4>
+            <UFormGroup class="w-full" help="You can't only upload pdf, doc, docx, and txt file - Max of 5 files." name="upload-document" label="Upload document" :error="!formData.baseUrl && fieldErrors.baseUrl">
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
+                <div class="flex-1">
+                  <UInput
+                      type="file"
+                      id="upload-document"
+                      :loading="isFetchingWebsiteInfo"
+                      accept=".pdf,.docx,.doc,.txt"
+                      max="5"
+                      multiple
+                      required
+                  />
+                </div>
+              </div>
+            </UFormGroup>
           </template>
 
           <div class="flex justify-between mt-20">

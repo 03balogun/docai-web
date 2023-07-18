@@ -52,6 +52,7 @@ export type Bot = {
         updated_at: string
     }>
     training_complete: boolean
+    training_failed: boolean
     total_docs: number
     trained_docs: number
 }
@@ -80,6 +81,6 @@ export type CreateBotPayload = {
     description: string
     dataType: string
     urls?: Array<string>
-    documents?: Array<File>
+    files?: FileList
     avatar?: string
 }

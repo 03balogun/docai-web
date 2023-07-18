@@ -73,9 +73,31 @@ export const useBotsStore = defineStore('bots', {
             this.createBotErrorMessage = ''
             this.isCreatingBot = true
 
+            const formData = new FormData()
+
+            const isDocuments = payload.dataType === 'documents'
+
+            if (isDocuments){
+                // append the object FileList to the FormData
+                const keys = Object.keys(payload?.files || {})
+                if (keys.length) {
+                    keys.forEach((key) => {
+                        const fileIndex = Number(key)
+                        formData.append(`documents[${key}]`, payload?.files?.[fileIndex] as Blob)
+                    })
+                }
+
+
+                // append the rest of the payload
+                formData.append('name', payload.name)
+                formData.append('description', payload.description)
+                formData.append('dataType', payload.dataType)
+            }
+
+
             const { data, pending, error} = await useAPIFetch<{data: Bot}, {data: FormatError}>('/bots', {
                 method: 'POST',
-                body: JSON.stringify(payload),
+                body: isDocuments ? formData : JSON.stringify(payload),
                 headers: {
                     'X-Recaptcha-Token': recaptchaToken,
                 }
@@ -131,8 +153,6 @@ export const useBotsStore = defineStore('bots', {
             if (data?.value) {
                 this.bot = data.value.data
             }
-
-            console.log('error', error.value)
 
             if (error.value) {
                 const {message} = formatError(error.value)

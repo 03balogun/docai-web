@@ -39,6 +39,16 @@ const checkTrainingStatus = async () => {
     // keep checking if training is complete
     const interval = setInterval(async () => {
       await getBot(botId)
+      if (bot.value?.training_failed) {
+        isTraining.value = false
+        clearInterval(interval)
+        navigateTo('/account')
+        // wait for page to load
+        setTimeout(() => {
+          useNuxtApp().$toast.error('Bot training failed, please try again.')
+        }, 1000)
+        return
+      }
       if (bot.value?.training_complete) {
         isTraining.value = false
         clearInterval(interval)
@@ -69,9 +79,9 @@ const getIntroMessage = async () => {
 onMounted( () => {
   checkTrainingStatus()
 
-  if (!isTraining.value) {
+  setTimeout(() => {
     getIntroMessage()
-  }
+  }, 1000)
 })
 
 const sessionId = ref('')
@@ -124,8 +134,6 @@ const addMessage = async () => {
         sessionId: sessionId.value
       }, token).then(async (response) => {
 
-        console.log('addMessage-[response]', response)
-
         if (response) {
           sessionId.value = response.sessionId
 
@@ -146,7 +154,7 @@ const addMessage = async () => {
         }
       }),
       {
-        pending: 'Sending message...',
+        pending: 'Awaiting response...',
         success: 'Message sent!',
         error: 'Failed to send message'
       }
@@ -182,7 +190,8 @@ const addMessage = async () => {
 
   <main class="md:ml-64 pt-2 mb-20" id="chat-body">
 
-    <div class="py-3 px-3 border-b border-gray-100 left-0 sm:left-auto justify-between flex items-center fixed z-10 bg-white dark:bg-black max-w-screen-md w-full">
+    <div class="py-3 pb-5 px-3 border-b border-gray-100 left-0 sm:left-auto justify-between flex items-center fixed z-10 bg-white dark:bg-black max-w-screen-md w-full"
+         :class="{'top-0': !isBotScreen }">
       <div class="flex items-center mb-2">
         <div>
           <img class="rounded-full border-b border-green:500" width="48" height="48" :alt="bot?.name"
@@ -232,6 +241,30 @@ const addMessage = async () => {
             <UAccordion color="primary" :items="sources.map((source) => {
                 return {
                   label: source.metadata.title,
+                  content: source.pageContent,
+                  color: from === 'user' ? 'green' : 'blue'
+                }
+              })">
+              <template #item="{item}">
+                <UButton
+                    :to="item?.metadata?.url"
+                    :label="item?.title"
+                    color="blue"
+                    target="_blank"
+                    variant="link"
+                    size="sm"
+                />
+                <span>{{ item?.content }}</span>
+              </template>
+            </UAccordion>
+          </ul>
+        </div>
+        <div v-if="sources?.length && bot?.data_type === 'documents'" class="my-2">
+          <span class="text-sm italic">Sources:</span>
+          <ul>
+            <UAccordion color="primary" :items="sources.map((source) => {
+                return {
+                  label: `Page: ${source.metadata?.loc?.pageNumber} - Line: ${source.metadata?.loc?.lines?.from} - ${source.metadata?.loc?.lines?.to}`,
                   content: source.pageContent,
                   color: from === 'user' ? 'green' : 'blue'
                 }

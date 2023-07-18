@@ -41,9 +41,11 @@ const handleDeleteBot = async () => {
           <div class="flex flex-col">
             <span class="text-xs inline-block">Training Status</span>
             <span class="text-sm inline-block sentence-case text-primary-800">
-              <UBadge :color="bot.training_complete ? 'primary' : 'orange'">{{
+              <UBadge v-if="!bot.training_failed" :color="bot.training_complete ? 'primary' : 'orange'">{{
                   bot.training_complete ? 'Completed' : 'Pending'
-                }}</UBadge> <span class="text-xs">({{ bot.trained_docs }} of {{ bot.total_docs }})</span>
+                }}</UBadge>
+              <UBadge v-else color="red">Failed</UBadge>
+              <span class="text-xs">({{ bot.trained_docs }} of {{ bot.total_docs }})</span>
             </span>
           </div>
         </div>
